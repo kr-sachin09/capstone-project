@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AgriMarket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #388E3C;
+            --dark: #2E7D32;
+            --light: #F1F8E9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS94l5BnFvxOxn3f5cEVzcdiFE-z6DX3SiD8A&s');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            /* thoda transparent */
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            width: 100px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-btn.active {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-btn:not(.active) {
+            background-color: white;
+            color: var(--dark);
+        }
+
+        .role-btn:not(.active):hover {
+            background-color: #f5f5f5;
+        }
+
+        .input-group {
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9e9e9e;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            margin-right: 0.5rem;
+            accent-color: var(--primary);
+        }
+
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .captcha-input {
+            flex: 2;
+        }
+
+        .captcha-code {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: var(--dark);
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .link-text {
+            display: block;
+            margin-top: 1rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .link-text:hover {
+            color: var(--dark);
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: #9e9e9e;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .divider-text {
+            padding: 0 1rem;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .facebook {
+            background: #3b5998;
+        }
+
+        .google {
+            background: #db4437;
+        }
+
+        .twitter {
+            background: #1da1f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <img src="{% static 'core/Lgo.png' %}" class="logo" alt="AgriMarket Logo">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Gramin Kisan Bazar</h2>
+
+        <div class="btn-group">
+            <button class="role-btn active" id="buyerBtn">
+                <i class="fas fa-shopping-cart mr-2"></i> Buyer
+            </button>
+            <button class="role-btn" id="farmerBtn">
+                <i class="fas fa-tractor mr-2"></i> Farmer
+            </button>
+        </div>
+
+        {# Django: लॉगिन फ़ॉर्म शुरू करें #}
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %} {# Django: CSRF सुरक्षा के लिए आवश्यक #}
+
+            <h3 id="loginRole" class="text-xl font-semibold text-gray-700 mb-6">Buyer Login</h3>
+
+            {# Django: यदि कोई एरर संदेश है तो उसे प्रदर्शित करें #}
+            {% if error_message %}
+                <p style="color: red; margin-bottom: 15px;">{{ error_message }}</p>
+            {% endif %}
+
+            <div class="input-group">
+                {# Django: 'name="username"' Django के AuthenticationForm के लिए आवश्यक है #}
+                <input type="text" class="input-field" placeholder="Enter Mobile Number or Email" name="username" required>
+                <i class="fas fa-user input-icon"></i>
+            </div>
+
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="loginType" id="passwordLogin" checked>
+                    <span>Password</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="loginType" id="otpLogin">
+                    <span>OTP</span>
+                </label>
+            </div>
+
+            <div class="input-group" id="passwordField">
+                {# Django: 'name="password"' Django के AuthenticationForm के लिए आवश्यक है #}
+                <input type="password" class="input-field" placeholder="Enter password" name="password">
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+
+            <a href="#" class="link-text text-right">Forgot Password?</a>
+
+            <div class="captcha-container">
+                <div class="captcha-code">NX8RE</div>
+                <input type="text" class="input-field ml-2 captcha-input" placeholder="Enter Captcha">
+                {# Django: यह बटन अब एक 'submit' बटन नहीं है, बल्कि एक JS ट्रिगर है #}
+                <button type="button" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            {# Django: 'type="submit"' फ़ॉर्म सबमिशन के लिए आवश्यक है #}
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt mr-2"></i> Log In
+            </button>
+        </form> {# Django: फ़ॉर्म समाप्त #}
+
+
+        <div class="divider">
+            <span class="divider-text">or</span>
+        </div>
+
+        <div class="social-login">
+            <a href="https://www.facebook.com" target="_blank" rel="noopener" title="Login with Facebook">
+                <div class="social-btn facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </div>
+            </a>
+
+            <a href="https://accounts.google.co.in/" target="_blank" title="Login with Google">
+                <div class="social-btn google">
+                    <i class="fab fa-google"></i>
+                </div>
+            </a>
+
+            <a href="https://www.twitter.com" target="_blank" rel="noopener" title="Login with Twitter">
+                <div class="social-btn twitter">
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </a>
+
+        </div>
+
+        {# Django: रजिस्ट्रेशन पेज का URL #}
+        <a href="{% url 'register' %}" class="link-text mt-4">Create New Account</a>
+    </div>
+
+    <script>
+        // Role selection
+        document.getElementById("buyerBtn").addEventListener("click", function () {
+            this.classList.add("active");
+            document.getElementById("farmerBtn").classList.remove("active");
+            document.getElementById("loginRole").textContent = "Buyer Login";
+        });
+
+        document.getElementById("farmerBtn").addEventListener("click", function () {
+            this.classList.add("active");
+            document.getElementById("buyerBtn").classList.remove("active");
+            document.getElementById("loginRole").textContent = "Farmer Login";
+        });
+
+        // Login type toggle
+        document.getElementById("otpLogin").addEventListener("change", function () {
+            document.getElementById("passwordField").style.display = "none";
+        });
+
+        document.getElementById("passwordLogin").addEventListener("change", function () {
+            document.getElementById("passwordField").style.display = "block";
+        });
+
+        // Generate random captcha
+        function generateCaptcha() {
+            const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            let captcha = "";
+            for (let i = 0; i < 5; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.querySelector(".captcha-code").textContent = captcha;
+        }
+
+        // Refresh captcha
+        document.querySelector(".refresh-btn").addEventListener("click", generateCaptcha);
+
+        // Initialize captcha on load
+        window.addEventListener("DOMContentLoaded", generateCaptcha);
+    </script>
+</body>
+
+</html>

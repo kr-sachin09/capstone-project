@@ -1,0 +1,346 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: auto; /* ✅ scroll allow */
+    }
+
+    .bubbles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 15s infinite ease-in;
+      opacity: 0.5;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+      }
+    }
+
+    .center-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      z-index: 2;
+    }
+
+    /* ✅ Scrollable wrapper */
+    .scroll-wrapper {
+      max-height: 100vh;
+      overflow-y: auto;
+      width: 100%;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      margin: auto;
+    }
+
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #4CAF50, #2196F3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
+      color: #555;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 25px;
+      background: linear-gradient(to right, #4CAF50, #2196F3);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .language-selector {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 25px 20px;
+        margin: 0 15px;
+      }
+    }
+
+    .password-field-container {
+      position: relative;
+    }
+
+    .password-input {
+      padding-right: 40px;
+    }
+
+    .toggle-eye {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
+    .switch-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .switch-btn {
+      color: #2a5298;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bubbles"></div>
+
+  <div class="center-container">
+    <!-- ✅ Scrollable wrapper starts -->
+    <div class="scroll-wrapper">
+      <div class="form-container" id="registration-container">
+        <div class="language-selector">
+          <label for="language">Select Language:</label>
+          <select id="language" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+          </select>
+        </div>
+        <h1 id="form-title">Registration Form</h1>
+
+        {# Django: रजिस्ट्रेशन फ़ॉर्म शुरू करें #}
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %} {# Django: CSRF सुरक्षा के लिए आवश्यक #}
+
+            {# Django: फ़ॉर्म फ़ील्ड को लूप करें #}
+            {% for field in form %}
+                {# Django: लेबल प्रदर्शित करें #}
+                <label id="label-{{ field.name }}" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                
+                {# Django: पासवर्ड फ़ील्ड के लिए आँख का आइकन #}
+                {% if field.name == 'password' or field.name == 'password2' %}
+                    <div class="password-field-container">
+                        {{ field }} {# Django: फ़ील्ड को रेंडर करें #}
+                        <span class="toggle-eye" onclick="togglePassword('{{ field.id_for_label }}', this)">👁️</span>
+                    </div>
+                {% else %}
+                    {{ field }} {# Django: अन्य फ़ील्ड को रेंडर करें #}
+                {% endif %}
+                
+                {# Django: हेल्प टेक्स्ट प्रदर्शित करें #}
+                {% if field.help_text %}
+                    <p class="helptext" style="font-size: 0.8em; color: #666; margin-top: 5px;">{{ field.help_text }}</p>
+                {% endif %}
+                
+                {# Django: फ़ील्ड के लिए एरर प्रदर्शित करें #}
+                {% for error in field.errors %}
+                    <p style="color: red; font-size: 0.8em;">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            
+            {# Django: नॉन-फ़ील्ड एरर प्रदर्शित करें (जैसे पासवर्ड मिलान नहीं) #}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+
+            {# Django: सबमिट बटन #}
+            <button id="submit-btn" type="submit">Register</button>
+        </form> {# Django: फ़ॉर्म समाप्त #}
+
+        <div class="switch-container">
+          {# Django: लॉगिन पेज का URL #}
+          <a href="{% url 'login' %}" class="switch-btn">Already Registered? Login Here</a>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ Scrollable wrapper ends -->
+  </div>
+
+  <script>
+    function createBubbles() {
+      const bubblesContainer = document.querySelector('.bubbles');
+      const bubblesCount = 15;
+
+      for (let i = 0; i < bubblesCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        const size = Math.random() * 100 + 20;
+        const posX = Math.random() * 100;
+        const delay = Math.random() * 15;
+        const duration = Math.random() * 20 + 10;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${posX}%`;
+        bubble.style.animationDelay = `${delay}s`;
+        bubble.style.animationDuration = `${duration}s`;
+        bubblesContainer.appendChild(bubble);
+      }
+    }
+
+    const translations = {
+      'en': {
+        'form-title': 'Registration Form',
+        'label-registration-type': 'Select Registration Type:',
+        'label-full-name': 'Full Name:',
+        'label-email': 'Email:',
+        'label-phone': 'Phone Number:',
+        'label-password': 'Create Password:',
+        'label-confirm-password': 'Confirm Password:',
+        'submit-btn': 'Register'
+      },
+      'hi': {
+        'form-title': 'पंजीकरण फॉर्म',
+        'label-registration-type': 'पंजीकरण प्रकार चुनें:',
+        'label-full-name': 'पूरा नाम:',
+        'label-email': 'ईमेल:',
+        'label-phone': 'फोन नंबर:',
+        'label-password': 'पासवर्ड बनाएं:',
+        'label-confirm-password': 'पासवर्ड की पुष्टि करें:',
+        'submit-btn': 'रजिस्टर करें'
+      }
+    };
+
+    function changeLanguage(lang) {
+      document.getElementById('form-title').innerText = translations[lang]['form-title'];
+      document.getElementById('label-registration-type').innerText = translations[lang]['label-registration-type'];
+      document.getElementById('label-full-name').innerText = translations[lang]['label-full-name'];
+      document.getElementById('label-email').innerText = translations[lang]['label-email'];
+      document.getElementById('label-phone').innerText = translations[lang]['label-phone'];
+      document.getElementById('label-password').innerText = translations[lang]['label-password'];
+      document.getElementById('label-confirm-password').innerText = translations[lang]['label-confirm-password'];
+      document.getElementById('submit-btn').innerText = translations[lang]['submit-btn'];
+
+      // Django फ़ॉर्म फ़ील्ड के लिए प्लेसहोल्डर को भाषा बदलने पर भी अपडेट करें
+      document.getElementById('id_username').placeholder = lang === 'en' ? "Enter a username" : "एक उपयोगकर्ता नाम दर्ज करें";
+      document.getElementById('id_email').placeholder = lang === 'en' ? "Enter your email" : "अपना ईमेल दर्ज करें";
+      document.getElementById('id_phone_number').placeholder = lang === 'en' ? "Enter your phone number" : "अपना फ़ोन नंबर दर्ज करें";
+      document.getElementById('id_password1').placeholder = lang === 'en' ? "Create a password" : "एक पासवर्ड बनाएं";
+      document.getElementById('id_password2').placeholder = lang === 'en' ? "Confirm your password" : "अपने पासवर्ड की पुष्टि करें";
+      document.getElementById('id_crops_grown').placeholder = lang === 'en' ? "e.g., Wheat, Rice, Tomato" : "उदाहरण: गेहूं, चावल, टमाटर";
+      document.getElementById('id_bio').placeholder = lang === 'en' ? "Tell us about yourself as a farmer..." : "एक किसान के रूप में अपने बारे में बताएं...";
+    }
+
+    function togglePassword(inputId, iconElement) {
+      const input = document.getElementById(inputId);
+      if (input.type === "password") {
+        input.type = "text";
+        iconElement.innerText = "🙈";
+      } else {
+        input.type = "password";
+        iconElement.innerText = "👁️";
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        createBubbles();
+        // प्रारंभिक लोड पर प्लेसहोल्डर सेट करें
+        document.getElementById('id_username').placeholder = "Enter a username";
+        document.getElementById('id_email').placeholder = "Enter your email";
+        document.getElementById('id_phone_number').placeholder = "Enter your phone number";
+        document.getElementById('id_password1').placeholder = "Create a password";
+        document.getElementById('id_password2').placeholder = "Confirm your password";
+        document.getElementById('id_crops_grown').placeholder = "e.g., Wheat, Rice, Tomato";
+        document.getElementById('id_bio').placeholder = "Tell us about yourself as a farmer...";
+    });
+  </script>
+
+</body>
+
+</html>

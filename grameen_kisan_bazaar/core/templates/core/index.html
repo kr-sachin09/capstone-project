@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grameen Kisan Bazaar</title>
+
+  <!-- 🔽 Internal CSS -->
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #e0efef;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color:rgb(50, 157, 46);
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .notification-link {
+      position: relative;
+      display: inline-block;
+    }
+
+    .notification-img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: red;
+      color: white;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 10px;
+    }
+
+    .login-btn {
+      padding: 8px 16px;
+      background-color:rgb(6, 74, 75);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-btn:hover {
+      background-color: #388e3c;
+    }
+
+    .sell-section {
+      background-color:rgb(112, 200, 118);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sell-text {
+      max-width: 75%;
+    }
+
+    .post-btn {
+      background-color:rgb(53, 51, 161);
+      color: white;
+      padding: 10px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    h2 {
+      margin-left: 10px;
+    }
+
+    .product-list {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 10px;
+    }
+
+    .product-item {
+      min-width: 220px;
+      flex: 0 0 auto;
+      text-align: center;
+    }
+
+    .product-item img {
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .why-choose {
+      background-color: #e0efef;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .reasons {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .reason {
+      max-width: 200px;
+      text-align: center;
+    }
+
+    .chat-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color:rgb(16, 92, 16);
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      text-align: center;
+      line-height: 60px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 999;
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+    }
+
+    .chat-header {
+      background-color: #5f9d5f;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .chat-messages {
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .chat-input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-bottom-left-radius: 10px;
+      outline: none;
+    }
+
+    .chat-input-area button {
+      background-color: #5f9d5f;
+      color: white;
+      border: none;
+      padding: 0 15px;
+      cursor: pointer;
+      border-bottom-right-radius: 10px;
+    }
+
+    .send-to-seller-btn {
+      padding: 8px 12px;
+      background-color: #5f9d5f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div style="display: flex; align-items: center;">
+      <img src="{% static 'core/Lgo.png' %}" alt="Logo" style="height: 80px; margin-right: 10px;">
+      <span style="font-size: 20px; font-weight: bold;">Connecting Farmer Directly with Customers</span>
+    </div>
+
+    <div class="header-buttons">
+      <input type="text" id="nav-search-bar" placeholder="Search..."
+        style="padding: 10px; border-radius: 8px; width: 300px;">
+      
+      
+      
+      {% if user.is_authenticated %}
+          <a href="{% url 'profile' %}" class="profile-icon-link">
+              <img src="{% static 'core/profile.jpg' %}" alt="Profile" style="height: 40px; width: 40px; border-radius: 50%;">
+          </a>
+          <a href="{% url 'logout' %}" class="login-btn">Logout</a>
+      {% else %}
+          <a href="{% url 'login' %}" class="login-btn">Login</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Sell Section -->
+  <div class="sell-section">
+    {# Django: यदि उपयोगकर्ता लॉग इन है और एक किसान है, तो "POST NOW" बटन दिखाएँ #}
+    {% if user.is_authenticated and user.role == 'farmer' %}
+        <div class="sell-text">
+            <b id="sell-title">Sell Your Crop</b><br>
+            <span id="sell-desc">List Your Fresh Product and Connect with Buyers Directly</span>
+        </div>
+        <button class="post-btn" onclick="window.location.href='{% url 'farmer_dashboard' %}'">POST NOW</button>
+    {% else %}
+        {# यदि उपयोगकर्ता किसान नहीं है या लॉग इन नहीं है, तो लॉगिन के लिए प्रॉम्प्ट करें #}
+        <div class="sell-text">
+            <b id="sell-title">Sell Your Crop</b><br>
+            <span id="sell-desc">List Your Fresh Product and Connect with Buyers Directly</span>
+        </div>
+        <button class="post-btn" onclick="window.location.href='{% url 'login' %}'">POST NOW (Login to sell)</button>
+    {% endif %}
+  </div>
+
+  <!-- Featured Products -->
+  <h2 id="feature-product-text">Featured Product</h2>
+  <div class="product-list">
+    {# Django: डेटाबेस से प्रोडक्ट्स को लूप करें #}
+    {% for product in products %}
+    <div class="product-item">
+      <a href="{% url 'product_detail' product.id %}" target="_blank">
+        {% if product.product_image %}
+            <img src="{{ product.product_image.url }}" alt="{{ product.name }}">
+        {% else %}
+            {# यदि कोई इमेज नहीं है तो एक प्लेसहोल्डर दिखाएँ #}
+            <img src="https://placehold.co/220x220?text=No+Image" alt="No Image">
+        {% endif %}
+        <p>{{ product.name }} - ₹{{ product.price_per_unit }}/{{ product.unit }}</p>
+      </a>
+    </div>
+    {% empty %}
+    {# यदि कोई प्रोडक्ट नहीं है तो यह संदेश दिखाएँ #}
+    <p style="text-align: center; width: 100%; padding: 20px;">अभी कोई प्रोडक्ट उपलब्ध नहीं है.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Why Choose Us -->
+  <div class="why-choose">
+    <h2 id="why-title">Why Choose Us</h2>
+    <div class="reasons">
+      <div class="reason">
+        <div>📍</div>
+        <b>Direct From Farmers</b><br>
+        <span>Crop Source directly from the Farmer</span>
+      </div>
+      <div class="reason">
+        <div>✔️</div>
+        <b>Verified Sellers</b><br>
+        <span>Sellers Verified for Authenticity</span>
+      </div>
+    </div>
+  </div>
+
+  {# Django: चैट आइकन केवल लॉग इन उपयोगकर्ता के लिए #}
+  {% if user.is_authenticated %}
+  <a href="{% url 'messages' %}" class="chat-icon">💬</a>
+  {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Organic Basmati Rice Product Detail</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* Custom green colors */
+  .btn-green {
+    background-color: #32b02b;
+    color: #ffffff;
+  }
+  .btn-green:hover {
+    background-color: #279823;
+  }
+  .btn-green-light {
+    background-color: #ecf7ef;
+    color: #2c6a17;
+  }
+  .btn-green-light:hover {
+    background-color: #d2ead2;
+  }
+  /* Rating stars container */
+  .rating-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  /* Progress bar backgrounds */
+  .progress-bar-bg {
+    background-color: #d9f1d9;
+  }
+  /* Progress bar fill */
+  .progress-bar-fill {
+    background-color: #32b02b;
+  }
+  /* Rating star shape using svg */
+  .star-filled {
+    width: 16px;
+    height: 16px;
+    fill: #32b02b;
+  }
+  /* Truncate multi-line text on crop description */
+  .crop-desc {
+    text-align: justify;
+    line-height: 1.5;
+  }
+  /* Image cards */
+  .product-thumb img {
+    border-radius: 0.375rem;
+    box-shadow: 0 6px 15px rgb(0 0 0 / 0.1);
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+  <main class="max-w-6xl mx-auto p-6">
+    <section class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Image Hero -->
+      <div>
+        {# Django: प्रोडक्ट इमेज प्रदर्शित करें #}
+        {% if product.product_image %}
+            <img src="{{ product.product_image.url }}"
+                 alt="{{ product.name }}"
+                 class="w-full object-cover h-64 md:h-80"
+                 onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=No+Image';" {# यदि इमेज लोड नहीं होती है तो प्लेसहोल्डर #}
+            />
+        {% else %}
+            <img src="https://placehold.co/600x400?text=No+Image"
+                 alt="No Image"
+                 class="w-full object-cover h-64 md:h-80"
+            />
+        {% endif %}
+      </div>
+      <!-- Content container -->
+      <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Left: Product title, actions, farmer info, crop description -->
+        <div class="md:col-span-2 space-y-6">
+          <div>
+            {# Django: प्रोडक्ट का नाम #}
+            <h1 class="text-2xl font-semibold mb-1">{{ product.name }}</h1>
+            {# Django: प्रोडक्ट की कीमत और इकाई #}
+            <p class="text-gray-700 mb-4 text-lg">₹{{ product.price_per_unit }}/{{ product.unit }}</p>
+            <div class="flex flex-col sm:flex-row gap-4 sm:items-center">
+              {# Django: मैसेज पेज का URL #}
+              <a href="{% url 'messages' %}" class="w-full sm:w-auto inline-block">
+                <button class="btn-green-light py-3 px-8 rounded-lg font-semibold shadow-sm w-full sm:w-auto">
+                  Chat Now
+                </button>
+              </a>
+            </div>
+          </div>
+          <section>
+            <h2 class="text-lg font-semibold mb-3">Farmer Info</h2>
+            <div class="flex items-center space-x-4 mb-4">
+              {# Django: किसान की प्रोफ़ाइल इमेज (यदि उपलब्ध हो, अन्यथा डिफ़ॉल्ट) #}
+              {% if product.seller.profile_picture %}
+                  <img src="{{ product.seller.profile_picture.url }}" alt="{{ product.seller.username }}'s photo" class="w-16 h-16 rounded-full object-cover shadow-md" />
+              {% else %}
+                  <img src="{% static 'core/img/profile.jpg' %}" alt="Default Farmer Photo" class="w-16 h-16 rounded-full object-cover shadow-md" />
+              {% endif %}
+              <div>
+                {# Django: किसान का उपयोगकर्ता नाम #}
+                <p class="font-semibold">{{ product.seller.username }}</p>
+                {# Django: किसान की भूमिका #}
+                <p class="text-gray-600 text-sm">{{ product.seller.get_role_display }}</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="flex items-center space-x-2 bg-green-600 text-white rounded-md py-2 px-3 shadow cursor-default select-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a7 7 0 017 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 017-7z" />
+                </svg>
+                <span class="font-semibold text-sm">Farm Location</span>
+              </div>
+              {# Django: प्रोडक्ट का स्थान #}
+              <div class="text-gray-700 font-medium text-sm">{{ product.location }}</div>
+              <button class="btn-green py-1 px-4 rounded-md font-semibold shadow-sm hover:bg-green-700 transition-colors">Contact</button>
+            </div>
+          </section>
+          <section>
+            <h2 class="text-lg font-semibold mb-3">Crop Description</h2>
+            {# Django: कटाई की तारीख, अनुमानित डिलीवरी और विवरण #}
+            <p class="crop-desc max-w-prose text-gray-700 text-sm leading-relaxed">
+              Harvested on {{ product.harvest_date|date:"F d, Y" }}. Estimated delivery: {{ product.estimated_delivery }}. {{ product.description }}
+            </p>
+          </section>
+        </div>
+        <!-- Right: Ratings, additional info, related products -->
+        
+               
+            <!-- Rating breakdown -->
+            <!-- <dl class="space-y-3 text-gray-700 text-sm select-none">
+              <div class="flex items-center gap-2">
+                <dt class="w-6 font-semibold">5</dt>
+                <progress class="progress-bar-fill rounded h-3 flex-1" max="100" value="50" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></progress>
+                <dd class="w-10 text-right text-xs">50%</dd>
+              </div>
+              <div class="flex items-center gap-2">
+                <dt class="w-6 font-semibold">4</dt>
+                <progress class="progress-bar-fill rounded h-3 flex-1" max="100" value="30" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></progress>
+                <dd class="w-10 text-right text-xs">30%</dd>
+              </div>
+              <div class="flex items-center gap-2">
+                <dt class="w-6 font-semibold">3</dt>
+                <progress class="progress-bar-fill rounded h-3 flex-1" max="100" value="10" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></progress>
+                <dd class="w-10 text-right text-xs">10%</dd>
+              </div>
+              <div class="flex items-center gap-2">
+                <dt class="w-6 font-semibold">2</dt>
+                <progress class="progress-bar-fill rounded h-3 flex-1" max="100" value="5" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></progress>
+                <dd class="w-10 text-right text-xs">5%</dd>
+              </div>
+              <div class="flex items-center gap-2">
+                <dt class="w-6 font-semibold">1</dt>
+                <progress class="progress-bar-fill rounded h-3 flex-1" max="100" value="5" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></progress>
+                <dd class="w-10 text-right text-xs">5%</dd>
+              </div>
+            </dl>
+          </section> -->
+          <section>
+            <h2 class="text-lg font-semibold mb-4 select-none">Additional Info</h2>
+            <div class="grid grid-cols-2 gap-6 text-gray-800 text-sm">
+              <div>
+                <p class="font-semibold mb-1 select-none">Crop Type</p>
+                {# Django: फ़सल का प्रकार #}
+                <p class="select-text">{{ product.crop_type }}</p>
+              </div>
+              <div>
+                <p class="font-semibold mb-1 select-none">Usage</p>
+                {# Django: उपयोग #}
+                <p class="select-text">{{ product.usage }}</p>
+              </div>
+              <div>
+                <p class="font-semibold mb-1 select-none">Storage</p>
+                {# Django: भंडारण जानकारी #}
+                <p class="select-text">{{ product.storage_info }}</p>
+              </div>
+            </div>
+          </section>
+          
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

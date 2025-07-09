@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farmer Profile - Grameen Kisan Bazaar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 min-h-screen p-6 font-sans">
+
+  <!-- Dashboard Button (Top Right) -->
+  <div class="max-w-5xl mx-auto mb-4 flex justify-end">
+    {# Django: होम पेज का URL #}
+    <a href="{% url 'home' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-full shadow-sm transition">
+      🏠 Dashboard
+    </a>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+    <div class="bg-green-600 p-6 flex items-center gap-6">
+      {# Django: प्रोफ़ाइल इमेज #}
+      <img src="{% static 'core/profile.jpg' %}" alt="Farmer Photo" class="w-28 h-28 rounded-full border-4 border-white shadow-md" />
+      <div>
+        {# Django: उपयोगकर्ता का नाम #}
+        <h1 class="text-3xl font-bold text-white">{{ user_profile.username }}</h1>
+        {# Django: उपयोगकर्ता ID #}
+        <p class="text-green-100">User ID: <span class="font-semibold text-white">{{ user_profile.id }}</span></p>
+        {# Django: उपयोगकर्ता की भूमिका (buyer/farmer) #}
+        <p class="text-green-100">Role: <span class="font-semibold text-white">{{ user_profile.get_role_display }}</span></p>
+        {# Django: यदि गाँव की जानकारी है तो प्रदर्शित करें #}
+        {% if user_profile.village %}
+            <p class="text-green-100">Village: {{ user_profile.village }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-green-50">
+      <div>
+        <label class="text-gray-600 text-sm">📞 Mobile Number</label>
+        {# Django: फ़ोन नंबर प्रदर्शित करें #}
+        <p class="text-lg font-semibold text-gray-800">{{ user_profile.phone_number|default:"N/A" }}</p>
+      </div>
+      <div>
+        <label class="text-gray-600 text-sm">📧 Email</label>
+        {# Django: ईमेल प्रदर्शित करें #}
+        <p class="text-lg font-semibold text-gray-800">{{ user_profile.email|default:"N/A" }}</p>
+      </div>
+      
+      {# Django: केवल तभी दिखाएँ जब उपयोगकर्ता किसान हो #}
+      {% if user_profile.role == 'farmer' %}
+      <div>
+        <label class="text-gray-600 text-sm">🌿 Crops Grown</label>
+        {# Django: उगाई गई फ़सलें प्रदर्शित करें #}
+        <p class="text-lg font-semibold text-gray-800">{{ user_profile.crops_grown|default:"N/A" }}</p>
+      </div>
+      <div class="md:col-span-2">
+        <label class="text-gray-600 text-sm">📝 Farmer Bio</label>
+        {# Django: किसान का बायो प्रदर्शित करें #}
+        <p class="text-gray-800 font-medium leading-relaxed">{{ user_profile.bio|default:"N/A" }}</p>
+      </div>
+      {% endif %}
+      
+    </div>
+
+    <div class="bg-white p-4 flex justify-end border-t">
+      <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full transition">Edit Profile (अभी कार्यान्वित नहीं)</button>
+    </div>
+  </div>
+
+</body>
+</html>
