@@ -1,3 +1,3 @@
 # capstone-project
 Grameen kishan bazaar
-files will be uploaded soon
+a digital mandi , where farmers can sell their crops directly buyers
